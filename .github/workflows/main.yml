@@ -1,0 +1,62 @@
+name: notificatoins
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install  wemake-python-styleguide flake8-html mypy lxml
+          
+      - name: Lint with wemake-python-styleguide
+        run: |
+          flake8 . --format=html --htmldir=report_flake_${{ matrix.python-version }}/
+          
+      - name: Lint with mypy
+        run: |
+          mypy --html-report report_mypy_api_${{ matrix.python-version }}/ api/src/*
+          mypy --html-report report_mypy_etl_${{ matrix.python-version }}/ etl/src/*
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: reports
+          path: report_*/
+
+  send_message:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: build
+    steps:
+      - name: send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: html
+          message: |
+            <b>${{ github.workflow }}</b> UCG Deploy report
+            <b>repo</b>: <a href="https://github.com/${{github.repository}}">${{github.repository}}</a>
+            <b>event</b>: ${{ github.event_name }}
+            <b>status</b>: ${{ needs.build.result }}
+            <b>details</b>: <a href="https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}">click</a>
