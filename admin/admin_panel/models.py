@@ -80,6 +80,7 @@ class MailingTask(models.Model):
         (Priority.medium, 'Medium'),
         (Priority.low, 'Low')
     )
+    is_promo = models.BooleanField(default=True)
 
     priority = models.CharField(
         max_length=250,
@@ -88,7 +89,7 @@ class MailingTask(models.Model):
     )
 
     template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True)
-    template_data = JSONField(default={})
+    context = JSONField(default={})
 
     scheduled_datetime = models.DateTimeField(blank=True, null=True)
     execution_datetime = models.DateTimeField(blank=True, null=True)
