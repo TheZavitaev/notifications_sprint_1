@@ -1,0 +1,13 @@
+{
+  "mailing_weekly": {
+    "event_type": "mailing_weekly",
+    "transport_type": "email",
+    "promo": true,
+    "priority": "low",
+    "user_ids": null,
+    "user_categories": [
+      "active"
+    ],
+    "user_ids": []
+  }
+}
