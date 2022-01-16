@@ -12,6 +12,9 @@ class TemplateCodes(models.TextChoices):
     selection_movies = 'selection_movies', 'Подборка фильмов'
     personal_newsletter = 'personal_newsletter', 'Персональная рассылка фильмов'
 
+    mailing_weekly = 'mailing_weekly', 'Еженедельная рассылка'
+    mailing_monthly = 'mailing_monthly', 'Ежемесячная рассылка'
+
 
 class Template(models.Model):
     """Email template."""
@@ -40,57 +43,67 @@ class Template(models.Model):
         db_table = 'email_templates'
 
 
-class Channels(str, Enum):
+class TransportType(str, Enum):
     email = 'email'
     sms = 'sms'
 
 
 class NotificationStatuses(str, Enum):
-    to_send = 'to_send'
+    to_send = 'pending'
     in_process = 'in_process'
     done = 'done'
     cancelled = 'cancelled'
-    failed = 'failed'
 
 
-class Task(models.Model):
-    """Модель задач."""
+class Priority(str, Enum):
+    high = 'high'
+    medium = 'medium'
+    low = 'low'
+
+
+class MailingTask(models.Model):
+    """Model mailing task."""
 
     NOTIFICATION_STATUSES = (
-        (NotificationStatuses.to_send, 'to_send'),
+        (NotificationStatuses.to_send, 'pending'),
         (NotificationStatuses.in_process, 'in_process'),
         (NotificationStatuses.done, 'done'),
         (NotificationStatuses.cancelled, 'cancelled'),
-        (NotificationStatuses.failed, 'failed'),
     )
     status = models.CharField(
         max_length=250,
         choices=NOTIFICATION_STATUSES,
         default=NotificationStatuses.to_send,
     )
-    email = models.CharField(max_length=250)
+    PRIORITY_QUEUE = (
+        (Priority.high, 'High'),
+        (Priority.medium, 'Medium'),
+        (Priority.low, 'Low')
+    )
+
+    priority = models.CharField(
+        max_length=250,
+        choices=PRIORITY_QUEUE,
+        default=Priority.low
+    )
+
     template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True)
     template_data = JSONField(default={})
+
     scheduled_datetime = models.DateTimeField(blank=True, null=True)
     execution_datetime = models.DateTimeField(blank=True, null=True)
 
-    retry_count = models.PositiveIntegerField(default=0)
-
-    hash_sum = models.CharField(max_length=100, unique=True)
-
     created_at = models.DateTimeField(editable=False)
     updated_at = models.DateTimeField(editable=False)
-
-    error_message = models.TextField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         """Save task."""
 
         if not self.id:
             self.created_at = timezone.now()
+
         self.updated_at = timezone.now()
         return super().save(*args, **kwargs)
 
     class Meta:
-        db_table = 'email_tasks'
-
+        db_table = 'mailing_tasks'
