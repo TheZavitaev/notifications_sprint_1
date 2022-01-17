@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from admin.admin_panel.models import Template, MailingTask
+from .models import Template, MailingTask
 
 
 @admin.register(Template)

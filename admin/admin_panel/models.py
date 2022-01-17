@@ -1,7 +1,7 @@
 from enum import Enum
 
-from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.db.models import JSONField
 from django.utils import timezone
 
 
@@ -43,54 +43,48 @@ class Template(models.Model):
         return self.title
 
     class Meta:
-        db_table = 'email_templates'
+        db_table = 'notification_templates'
 
 
-class TransportType(str, Enum):
-    email = 'email'
-    sms = 'sms'
+class TransportType(models.TextChoices):
+    email = 'email', 'email'
+    sms = 'sms', 'sms'
 
 
-class NotificationStatuses(str, Enum):
-    to_send = 'pending'
-    in_process = 'in_process'
-    done = 'done'
-    cancelled = 'cancelled'
+class NotificationStatuses(models.TextChoices):
+    to_send = 'pending', 'В очередь на отправку'
+    in_process = 'in_process', 'В процессе отправки'
+    done = 'done', 'Отправлено'
+    cancelled = 'cancelled', 'Отменено'
 
 
-class Priority(str, Enum):
-    high = 'high'
-    medium = 'medium'
-    low = 'low'
+class Priority(models.TextChoices):
+    high = 'high', 'Высокий приоритет'
+    medium = 'medium', 'Средний приоритет'
+    low = 'low', 'Низкий приоритет'
 
 
 class MailingTask(models.Model):
     """Model mailing task."""
 
-    NOTIFICATION_STATUSES = (
-        (NotificationStatuses.to_send, 'pending'),
-        (NotificationStatuses.in_process, 'in_process'),
-        (NotificationStatuses.done, 'done'),
-        (NotificationStatuses.cancelled, 'cancelled'),
-    )
     status = models.CharField(
         max_length=250,
-        choices=NOTIFICATION_STATUSES,
+        choices=NotificationStatuses.choices,
         default=NotificationStatuses.to_send,
     )
-    PRIORITY_QUEUE = (
-        (Priority.high, 'High'),
-        (Priority.medium, 'Medium'),
-        (Priority.low, 'Low')
-    )
+
     is_promo = models.BooleanField(default=True)
 
     priority = models.CharField(
         max_length=250,
-        choices=PRIORITY_QUEUE,
+        choices=Priority.choices,
         default=Priority.low
     )
-
+    transport = models.CharField(
+        max_length=250,
+        choices=TransportType.choices,
+        default=TransportType.email
+    )
     template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True)
     context = JSONField(default={})
 
