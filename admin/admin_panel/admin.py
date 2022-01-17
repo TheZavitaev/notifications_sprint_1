@@ -1,3 +1,13 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Template, MailingTask
+
+
+@admin.register(Template)
+class TemplatesAdmin(admin.ModelAdmin):
+    """Admin interface for Template."""
+
+
+@admin.register(MailingTask)
+class TasksAdmin(admin.ModelAdmin):
+    """Admin interface for Task."""
