@@ -6,14 +6,17 @@ from django.utils import timezone
 
 
 class TemplateCodes(models.TextChoices):
-    """Email template codes."""
+    """Template codes."""
 
     welcome_letter = 'welcome_letter', 'Приветственное письмо'
+    # admin panel
     selection_movies = 'selection_movies', 'Подборка фильмов'
     personal_newsletter = 'personal_newsletter', 'Персональная рассылка фильмов'
-
+    # scheduler
     mailing_weekly = 'mailing_weekly', 'Еженедельная рассылка'
     mailing_monthly = 'mailing_monthly', 'Ежемесячная рассылка'
+    # e.g. sms notify
+    security_notification = 'security_notification', 'Уведомление системы безопасности'
 
 
 class Template(models.Model):
@@ -21,7 +24,7 @@ class Template(models.Model):
 
     title = models.CharField('Наименование', max_length=250)
     code = models.CharField(choices=TemplateCodes.choices, max_length=50)
-    html = models.TextField()
+    template = models.TextField()
     subject = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(editable=False)
