@@ -46,11 +46,6 @@ class Template(models.Model):
         db_table = 'notification_templates'
 
 
-class TransportType(models.TextChoices):
-    email = 'email', 'email'
-    sms = 'sms', 'sms'
-
-
 class NotificationStatuses(models.TextChoices):
     to_send = 'pending', 'В очередь на отправку'
     in_process = 'in_process', 'В процессе отправки'
@@ -79,11 +74,6 @@ class MailingTask(models.Model):
         max_length=250,
         choices=Priority.choices,
         default=Priority.low
-    )
-    transport = models.CharField(
-        max_length=250,
-        choices=TransportType.choices,
-        default=TransportType.email
     )
     template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True)
     context = JSONField(default={})
