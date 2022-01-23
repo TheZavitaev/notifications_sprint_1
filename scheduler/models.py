@@ -1,24 +1,7 @@
 from enum import Enum
-from typing import List
+from typing import Any, Dict, List
 
-from pydantic import BaseModel
-
-
-class EventType(Enum):
-    MAILING_WEEKLY = 'mailing_weekly'
-    MAILING_MONTHLY = 'mailing_monthly'
-
-    @staticmethod
-    def from_string(s):
-        try:
-            return EventType(s)
-        except KeyError:
-            raise ValueError()
-
-
-class TransportType(Enum):
-    EMAIL = 'email'
-    SMS = 'sms'
+from pydantic.main import BaseModel
 
 
 class Priority(Enum):
@@ -27,13 +10,16 @@ class Priority(Enum):
     LOW = 'low'
 
 
-class Event(BaseModel):
-    event_type: EventType
-    transport_type: TransportType
-    promo: bool
-    priority: Priority
+class BaseContext(BaseModel):
     user_ids: List[str]
     user_categories: List[str]
+
+
+class Event(BaseModel):
+    id: int
+    is_promo: bool
+    priority: Priority
+    context: Dict[Any, Any]
 
     class Config:
         use_enum_values = True
