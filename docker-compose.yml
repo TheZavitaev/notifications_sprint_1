@@ -8,4 +8,23 @@ services:
       POSTGRES_DB: notifications
     ports:
       - "5432:5432"
-# pass
+
+  api:
+    container_name: fake_netflix_notification_api
+    build:
+      context: .
+      dockerfile: dockerfiles/api/Dockerfile
+    networks:
+      - cinema_network
+    ports:
+      - 8001:8000
+
+    rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: fake_netflix_notification_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
