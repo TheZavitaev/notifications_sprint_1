@@ -1,0 +1,183 @@
+{
+  "items": [
+    {
+      "id": 3,
+      "is_promo": true,
+      "priority": "low",
+      "template_id": 1,
+      "user_ids": [
+        "eba6db18-02ca-496a-ad70-f16fc876cd2a",
+        "c15c61d0-1543-49b5-bfb9-c2743b3079e3",
+        "eb44c10e-d16b-4cf3-bc9c-fa346c2a3548",
+        "b482fb1a-78a6-4333-9820-5ab58f5d829b",
+        "e1d0cc78-d063-488d-9139-b4c3dc5d8579"
+      ],
+      "context": {
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "is_promo": true,
+      "priority": "low",
+      "template_id": 1,
+      "user_ids": [
+        "4c073cb3-91e6-4c67-9851-98a7bcca7261",
+        "474ad37a-06fc-4a85-a3b6-b8058908657b",
+        "55670c8b-f21a-4f1a-9466-0a3a1d705d36",
+        "c87556ea-1bd9-4445-a68a-9cc80de01fa6",
+        "9ae016e0-3874-4490-8e24-7af4da8c0dc6"
+      ],
+      "context": {
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "is_promo": true,
+      "priority": "low",
+      "template_id": 1,
+      "user_ids": [
+        "8c1bda9d-901d-47aa-baeb-47637f829e97",
+        "bbdfb4b4-d49c-4ba1-94b2-cf23c2bdc5ad",
+        "0ba82c24-2c3d-43d2-96ab-f243fec4e441",
+        "dadb618c-9713-467b-a93c-68ddc15bf441",
+        "0fd76eea-b58b-482c-af3c-052133c97ea3"
+      ],
+      "context": {
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "is_promo": true,
+      "priority": "low",
+      "template_id": 1,
+      "user_ids": [
+        "8d26a3a5-909d-4d23-b578-6dcca8e1ee57",
+        "ca65f431-24b0-4a4e-8b0a-6b102aa17165",
+        "c36c45d8-754d-4a46-9626-37b1aa2a5d81",
+        "62245059-407f-4345-a63d-8cea56c3c636",
+        "17a3a440-b103-49c0-b1d8-62c37194cdce"
+      ],
+      "context": {
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "is_promo": true,
+      "priority": "low",
+      "template_id": 1,
+      "user_ids": [
+        "c8e6df44-0b7b-4212-8c80-14a237e1347a"
+      ],
+      "context": {
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "is_promo": true,
+      "priority": "high",
+      "template_id": 1,
+      "user_ids": [
+        "eb44c10e-d16b-4cf3-bc9c-fa346c2a3548",
+        "b482fb1a-78a6-4333-9820-5ab58f5d829b",
+        "e1d0cc78-d063-488d-9139-b4c3dc5d8579",
+        "4c073cb3-91e6-4c67-9851-98a7bcca7261",
+        "474ad37a-06fc-4a85-a3b6-b8058908657b"
+      ],
+      "context": {
+        "book": "something",
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "is_promo": true,
+      "priority": "high",
+      "template_id": 1,
+      "user_ids": [
+        "55670c8b-f21a-4f1a-9466-0a3a1d705d36",
+        "c87556ea-1bd9-4445-a68a-9cc80de01fa6",
+        "9ae016e0-3874-4490-8e24-7af4da8c0dc6",
+        "8c1bda9d-901d-47aa-baeb-47637f829e97",
+        "bbdfb4b4-d49c-4ba1-94b2-cf23c2bdc5ad"
+      ],
+      "context": {
+        "book": "something",
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "is_promo": true,
+      "priority": "high",
+      "template_id": 1,
+      "user_ids": [
+        "0ba82c24-2c3d-43d2-96ab-f243fec4e441",
+        "dadb618c-9713-467b-a93c-68ddc15bf441",
+        "0fd76eea-b58b-482c-af3c-052133c97ea3",
+        "8d26a3a5-909d-4d23-b578-6dcca8e1ee57",
+        "ca65f431-24b0-4a4e-8b0a-6b102aa17165"
+      ],
+      "context": {
+        "book": "something",
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    },
+    {
+      "id": 1,
+      "is_promo": true,
+      "priority": "high",
+      "template_id": 1,
+      "user_ids": [
+        "c36c45d8-754d-4a46-9626-37b1aa2a5d81",
+        "62245059-407f-4345-a63d-8cea56c3c636",
+        "17a3a440-b103-49c0-b1d8-62c37194cdce",
+        "c8e6df44-0b7b-4212-8c80-14a237e1347a"
+      ],
+      "context": {
+        "book": "something",
+        "films": [
+          "380164b8-7503-4c15-b83d-88de95743880",
+          "b0a67781-567c-407d-8c30-4f9d49325d88",
+          "35936f0f-6aa5-4d03-afb3-a7e0ad099a66"
+        ]
+      }
+    }
+  ]
+}
