@@ -1,11 +1,14 @@
-FROM python:3.9.1-slim
+FROM python:3.10-slim
 
 ENV PYTHONUNBUFFERED 1
 
 ARG ROOT_APP=/app/
 
-RUN
-    mkdir -p $ROOT_APP/static && \
+RUN apt-get update && \
+    apt-get install -y postgresql-client && \
+    apt-get clean
+
+RUN mkdir -p $ROOT_APP/static && \
     mkdir $ROOT_APP/media
 
 COPY admin/requirements.txt $ROOT_APP/requirements.txt
@@ -20,4 +23,4 @@ COPY admin/src $ROOT_APP
 
 RUN chmod +x entrypoint.sh
 
-ENTRYPOINT ['./entrypoint.sh']
+ENTRYPOINT ["./entrypoint.sh"]

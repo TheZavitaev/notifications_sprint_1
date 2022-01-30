@@ -1,4 +1,4 @@
-version: "3"
+version: "3.5"
 services:
 
   admin_panel:
@@ -6,11 +6,14 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/admin/Dockerfile
-    networks:
-      - cinema_network
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: notifications
+      POSTGRES_HOST: localhost
     volumes:
-      - fake_netflix_nginx_notification_static:/app/static
-      - fake_netflix_nginx_notification_media:/app/media
+      - fake_netflix_notification_static:/app/static
+      - fake_netflix_notification_media:/app/media
 
   api:
     container_name: fake_netflix_notification_api
@@ -20,17 +23,17 @@ services:
     ports:
       - 8001:8000
 
-  scheduler:
-    container_name: fake_netflix_scheduler
-    build:
-      context: .
-      dockerfile: dockerfiles/scheduler/Dockerfile
+#  scheduler:
+#    container_name: fake_netflix_scheduler
+#    build:
+#      context: .
+#      dockerfile: dockerfiles/scheduler/Dockerfile
 
-  worker:
-    container_name: fake_netflix_worker
-    build:
-      context: .
-      dockerfile: dockerfiles/workers/Dockerfile
+#  worker:
+#    container_name: fake_netflix_worker
+#    build:
+#      context: .
+#      dockerfile: dockerfiles/workers/Dockerfile
 
   postgres:
     image: postgres:13-alpine
@@ -38,6 +41,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: notifications
+      POSTGRES_HOST: localhost
     volumes:
       - postgres_notification_data:/var/lib/postgresql/data
     ports:
@@ -66,5 +70,5 @@ services:
 
 volumes:
   postgres_notification_data:
-  fake_netflix_nginx_notification_static:
-  fake_netflix_nginx_notification_media:
+  fake_netflix_notification_static:
+  fake_netflix_notification_media:

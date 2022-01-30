@@ -7,7 +7,7 @@ class Settings(BaseSettings):
 
     rabbit_username: str = 'rabbit'
     rabbit_password: str = 'rabbit'
-    rabbit_host: str = 'cinema_notification_rabbitmq'
+    rabbit_host: str = 'fake_netflix_notification_rabbitmq'
 
     rabbit_exchange: str = 'email'
     rabbit_exchange_type: str = 'direct'
