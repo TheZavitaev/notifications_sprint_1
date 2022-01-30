@@ -7,11 +7,11 @@ from psycopg2 import sql
 
 from config import config
 from db.postgres import Postgres
-from models import Event, BaseContext
+from models import Event
 from publisher.publisher_abstract import PublisherAbstract
 from publisher.publisher_fake import PublisherFake
+from user_service_client.client import UserServiceClient
 from user_service_client.client_abstract import UserServiceClientAbstract
-from user_service_client.client_fake import UserServiceClientFake
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -33,13 +33,13 @@ class Scheduler:
 
         result = []
 
-        for users_chunk in create_chunks(event.context['user_ids'], config.PUBLISHER_CHUNK_SIZE):
+        for users_chunk in create_chunks(event.user_ids, config.PUBLISHER_CHUNK_SIZE):
             new_event = copy.deepcopy(event)
-            new_event.context['user_ids'] = users_chunk
+            new_event.user_ids = users_chunk
             result.append(new_event)
         return result
 
-    def get_user_ids(self, user_categories: List[str]):
+    def get_user_ids(self, user_categories: List[str]) -> List[str]:
         """Получить список пользователей, относящихся к переданому списку категорий"""
         ids = []
         for category in user_categories:
@@ -55,6 +55,15 @@ class Scheduler:
 
         self.postgres.exec(query, {'item_id': item_id})
 
+    def mark_event_as_cancel(self, item_id: int):
+        """Пометить запись как завершенную"""
+        query = sql.SQL("""update mailing_tasks
+                           set status = 'cancel',
+                           execution_datetime = current_timestamp
+                           where id = %(item_id)s;""")
+
+        self.postgres.exec(query, {'item_id': item_id})
+
     def get_ready_events(self) -> List[Event]:
         """Получить все записи, готовые к обработке"""
         query = sql.SQL("""select id, is_promo, priority, context, scheduled_datetime, template_id from mailing_tasks
@@ -64,23 +73,47 @@ class Scheduler:
                            limit %(batch_size)s;""")
 
         items = self.postgres.exec(query, {'batch_size': config.SELECT_BATCH_SIZE})
-        return [Event(**item) for item in items]
+
+        events = []
+        for item in items:
+            context = item['context']
+            try:
+                user_ids = context['user_ids']
+                del context['user_ids']
+            except KeyError:
+                pass
+            try:
+                user_categories = context['user_categories']
+                del context['user_categories']
+            except KeyError:
+                pass
+            item['context'] = context
+            event = Event(
+                **item,
+                user_ids=user_ids,
+                user_categories=user_categories
+            )
+            events.append(event)
+        return events
 
     def work(self):
         """Выбрать готовые записи и обработать их"""
         events = self.get_ready_events()
         logger.info(f'Handle {len(events)} events')
         for event in events:
-            base_context = BaseContext(**event.context)
 
-            user_ids = self.get_user_ids(base_context.user_categories)
-            event.context['user_ids'].extend(user_ids)
-            del event.context['user_categories']
+            user_ids = self.get_user_ids(event.user_categories)
+            event.user_ids.extend(user_ids)
+            # удалить дубликаты
+            user_ids = list(set(user_ids))
 
+            if not event.user_ids:
+                logger.error(f'user_id list is empty. Skip')
+                self.mark_event_as_cancel(event.id)
+                continue
             event_chunks = self.__chunker(event)
-
             for chunk in event_chunks:
-                self.publisher.publish(chunk.dict())
+                self.publisher.publish(chunk.dict(exclude={'user_categories'}))
 
             self.mark_event_as_done(event.id)
 
@@ -88,7 +121,7 @@ class Scheduler:
 def main():
     scheduler = Scheduler(
         Postgres(),
-        UserServiceClientFake(),
+        UserServiceClient(),
         PublisherFake()
     )
 
