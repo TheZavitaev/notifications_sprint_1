@@ -4,4 +4,6 @@
 
 
 # Проектная работа 10 спринта
-[Задачи](doc/tasks.md)
+
+
+![schema_api](/Users/ozavitaev/dev/MPD/notifications_sprint_1/doc/schema_api.png)
