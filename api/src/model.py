@@ -1,17 +1,10 @@
-from datetime import datetime
 from enum import Enum
 from typing import Dict
 
 from pydantic import BaseModel
 
 
-class Service(str, Enum):  # надо ли?
-    ugc = 'ugc'
-    auth = 'auth'
-    admin = 'admin'
-
-
-class Source(str, Enum):  # и это? тут, наверное, надо очередь замутить
+class Transport(str, Enum):
     email = 'email'
     sms = 'sms'
     push = 'push'
@@ -29,8 +22,6 @@ class EventType(str, Enum):
 
 
 class Event(BaseModel):
-    service: Service
-    source: Source
+    transport: Transport
     event_type: EventType
-    scheduled_datetime: datetime
     payload: Dict

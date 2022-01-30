@@ -69,4 +69,4 @@ target/
 */.pytest_cache/
 /.mypy_cache/
 /.venv*
-/admin/db.sqlite3
+/admin/src/db.sqlite3

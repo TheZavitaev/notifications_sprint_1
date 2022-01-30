@@ -1,25 +1,49 @@
 version: "3"
 services:
-  postgres:
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: notifications
-    ports:
-      - "5432:5432"
+
+  admin_panel:
+    container_name: fake_netflix_notification_admin
+    build:
+      context: .
+      dockerfile: dockerfiles/admin/Dockerfile
+    networks:
+      - cinema_network
+    volumes:
+      - fake_netflix_nginx_notification_static:/app/static
+      - fake_netflix_nginx_notification_media:/app/media
 
   api:
     container_name: fake_netflix_notification_api
     build:
       context: .
       dockerfile: dockerfiles/api/Dockerfile
-    networks:
-      - cinema_network
     ports:
       - 8001:8000
 
-    rabbitmq:
+  scheduler:
+    container_name: fake_netflix_scheduler
+    build:
+      context: .
+      dockerfile: dockerfiles/scheduler/Dockerfile
+
+  worker:
+    container_name: fake_netflix_worker
+    build:
+      context: .
+      dockerfile: dockerfiles/workers/Dockerfile
+
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: notifications
+    volumes:
+      - postgres_notification_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: fake_netflix_notification_rabbitmq
     environment:
@@ -28,3 +52,19 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  nginx:
+    container_name: fake_netflix_notification_nginx
+    image: nginx:latest
+    ports:
+      - 8000:80
+    volumes:
+      - ./dockerfiles/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./dockerfiles/nginx/conf.d:/etc/nginx/conf.d
+      - fake_netflix_notification_static:/usr/share/nginx/www/static
+      - fake_netflix_notification_media:/usr/share/nginx/www/media
+
+volumes:
+  postgres_notification_data:
+  fake_netflix_nginx_notification_static:
+  fake_netflix_nginx_notification_media:

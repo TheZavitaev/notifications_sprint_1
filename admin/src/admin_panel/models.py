@@ -17,6 +17,11 @@ class TemplateCodes(models.TextChoices):
     security_notification = 'security_notification', 'Уведомление системы безопасности'
 
 
+class Transport(models.TextChoices):
+    sms = 'sms'
+    email = 'email'
+
+
 class Template(models.Model):
     """Email template."""
 
@@ -24,6 +29,7 @@ class Template(models.Model):
     code = models.CharField(choices=TemplateCodes.choices, max_length=50)
     template = models.TextField()
     subject = models.TextField(blank=True, null=True)
+    transport = models.CharField(choices=Transport.choices, max_length=50, default=Transport.email)
 
     created_at = models.DateTimeField(editable=False)
     updated_at = models.DateTimeField(editable=False)
@@ -46,7 +52,6 @@ class Template(models.Model):
 
 class NotificationStatuses(models.TextChoices):
     to_send = 'pending', 'В очередь на отправку'
-    in_process = 'in_process', 'В процессе отправки'
     done = 'done', 'Отправлено'
     cancelled = 'cancelled', 'Отменено'
 
