@@ -33,6 +33,7 @@ Trade-off как он есть :)
     "code": "welcome_letter",
     "template": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <title>welcome letter</title>\r\n</head>\r\n<body>\r\n  <h1>Dear {{ username }}</h1>\r\n  <p>We are glad to welcome you to the FakeNetflix website! </p>\r\n  <p>Verify your account by clicking on the link: {{ short_link }}</p>\r\n</body>\r\n</html>",
     "subject": "welcome letter",
+    "transport": "email"
     "created_at": "2022-01-17 14:56:01.590664 +00:00",
     "updated_at": "2022-01-17 14:56:01.590669 +00:00"
   },
