@@ -54,5 +54,14 @@
 # Как запустить локально
 
 ```shell
-docker_compose up --build
+docker-compose up --build
+docker-compose exec admin_panel python manage.py createsuperuser
+docker-compose exec admin_panel python manage.py loaddata fixtures/admin_panel_data.json
 ```
+
+Теперь можно пойти панель админа panel http://127.0.0.1:8000/admin/
+
+## Запустить отпраку писем
+
+Переключить [задачу](http://127.0.0.1:8000/admin/admin_panel/mailingtask/2/change/) в состояние `В очередь на отправку`
+Смотреть логи контейнера worker
