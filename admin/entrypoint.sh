@@ -10,4 +10,4 @@ done
 python3 manage.py migrate
 python3 manage.py collectstatic --no-input
 
-gunicorn -c gunicorn.conf.py core.wsgi:application
+gunicorn -c gunicorn.conf.py config.wsgi:application
