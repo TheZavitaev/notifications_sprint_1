@@ -105,7 +105,7 @@ class Scheduler:
             user_ids = self.get_user_ids(event.user_categories)
             event.user_ids.extend(user_ids)
             # удалить дубликаты
-            user_ids = list(set(user_ids))
+            event.user_ids = list(set(user_ids))
 
             if not event.user_ids:
                 logger.error('user_id list is empty. Skip')

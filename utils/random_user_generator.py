@@ -37,11 +37,16 @@ def generate_user() -> UserInfo:
     )
 
 
-users = []
-for i in range(0, 100):
-    user = generate_user()
-    users.append(user.dict())
-    print(user)
+def main():
+    users = []
+    for _ in range(100):
+        user = generate_user()
+        users.append(user.dict())
+        print(user)
 
-with open('users.json', 'w') as file:
-    json.dump({'users': users}, file)
+    with open('users.json', 'w') as file:
+        json.dump({'users': users}, file)
+
+
+if __name__ == '__main__':
+    main()
