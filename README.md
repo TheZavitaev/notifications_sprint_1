@@ -40,4 +40,4 @@
 
 ## Схематично это можно представить следующим образом
 
-![schema_api](/Users/ozavitaev/dev/MPD/notifications_sprint_1/doc/schema_api.png)
+![schema_api](doc/schema_api.png)
