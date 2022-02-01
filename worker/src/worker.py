@@ -77,3 +77,4 @@ class Worker:
                 item_to_send = self.__build_from_template(template, user_info, context)
                 # отправить дальше
                 self.email_sender.send(user_info.email, template.subject, item_to_send)
+            logging.info(f'Handled {len(event.user_ids)} notifications')
