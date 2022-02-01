@@ -1,12 +1,13 @@
 import http
 import logging
+from uuid import UUID
 
 import backoff
 import pika
+from fastapi import FastAPI, HTTPException
 
 from config import settings
-from model import Event
-from fastapi import FastAPI, HTTPException
+from model import Mailing, WelcomeNotification
 
 app = FastAPI()
 
@@ -51,13 +52,13 @@ def shutdown_event():
     connection.close()
 
 
-@app.post('/api/v1/event', status_code=http.HTTPStatus.CREATED)
-def put_event_to_queue(event: Event):
+@app.post('/api/v1/send_notification', status_code=http.HTTPStatus.CREATED)
+def put_notification_to_queue(mailing: Mailing):
     try:
         channel.basic_publish(
             exchange=settings.rabbit_exchange,
             routing_key=settings.rabbit_events_queue_name,
-            body=event.json(),
+            body=mailing.json(),
         )
     except Exception as err:
         logger.error(f'ERROR - queue publishing error: {str(err)}')
@@ -66,4 +67,24 @@ def put_event_to_queue(event: Event):
             detail='500: Internal server error. Please try later.',
         )
 
-    return {'201': 'Created'}
+    return {'201': 'Created mailing event'}
+
+
+@app.post('/api/v1/user_registration', status_code=http.HTTPStatus.CREATED)
+def put_event_to_queue(user_id: UUID):
+    event = WelcomeNotification(payload={'user_id': user_id})
+
+    try:
+        channel.basic_publish(
+            exchange=settings.rabbit_exchange,
+            routing_key=settings.rabbit_events_queue_name,
+            body=event.json(),
+        )
+    except Exception as err:
+        logger.error(f'ERROR - queue publishing error: {str(err)} for {user_id}')
+        raise HTTPException(
+            http.HTTPStatus.INTERNAL_SERVER_ERROR,
+            detail='500: Internal server error. Please try later.',
+        )
+
+    return {'201': 'Created welcome event'}
