@@ -1,0 +1,9 @@
+backoff
+django
+pika
+psycopg2-binary
+python-dotenv
+pydantic
+backoff
+Jinja2
+requests

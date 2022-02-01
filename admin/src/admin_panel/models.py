@@ -5,16 +5,8 @@ from django.utils import timezone
 
 class TemplateCodes(models.TextChoices):
     """Template codes."""
-
-    welcome_letter = 'welcome_letter', 'Приветственное письмо'
-    # admin panel
-    selection_movies = 'selection_movies', 'Подборка фильмов'
-    personal_newsletter = 'personal_newsletter', 'Персональная рассылка фильмов'
-    # scheduler
-    mailing_weekly = 'mailing_weekly', 'Еженедельная рассылка'
-    mailing_monthly = 'mailing_monthly', 'Ежемесячная рассылка'
-    # e.g. sms notify
-    security_notification = 'security_notification', 'Уведомление системы безопасности'
+    common = 'common', 'Обычное письмо'
+    monthly_personal_statistic = 'monthly_personal_statistic', 'Ежемесячная персональная статистика'
 
 
 class Transport(models.TextChoices):

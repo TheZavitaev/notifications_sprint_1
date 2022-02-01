@@ -73,3 +73,19 @@ MailingTask имеет следующий вид:
 
 Мы можем выбрать приоритет для рассылки, способ рассылки, статический контент для одинаковых писем, выбрать является ли 
 рассылка рекламной, выбрать время доставки письма пользователем.
+
+## Тестовые данные
+
+Загрузить в базу
+
+```shell
+cd admin/src
+python manage.py loaddata fixtures/admin_panel_data.json
+```
+
+Дампнуть из базы
+
+```shell
+cd admin/src
+python manage.py dumpdata admin_panel > fixtures/admin_panel_data.json
+```

@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: notifications
-      POSTGRES_HOST: localhost
+      POSTGRES_HOST: postgres
     volumes:
       - fake_netflix_notification_static:/app/static
       - fake_netflix_notification_media:/app/media
@@ -23,17 +23,39 @@ services:
     ports:
       - 8001:8000
 
-#  scheduler:
-#    container_name: fake_netflix_scheduler
-#    build:
-#      context: .
-#      dockerfile: dockerfiles/scheduler/Dockerfile
+  user_service:
+    container_name: fake_netflix_user_service
+    build:
+      context: .
+      dockerfile: dockerfiles/user_service/Dockerfile
+    ports:
+      - 8002:8002
 
-#  worker:
-#    container_name: fake_netflix_worker
-#    build:
-#      context: .
-#      dockerfile: dockerfiles/workers/Dockerfile
+  scheduler:
+    container_name: fake_netflix_scheduler
+    build:
+      context: .
+      dockerfile: dockerfiles/scheduler/Dockerfile
+    environment:
+      POSTGRES_DSN: postgres://postgres:postgres@postgres:5432/notifications
+      USER_SERVICE_URL: http://user_service:8002/api/v1/
+    depends_on:
+      - user_service
+      - postgres
+
+  worker:
+    container_name: fake_netflix_worker
+    build:
+      context: .
+      dockerfile: dockerfiles/worker/Dockerfile
+    environment:
+      POSTGRES_DSN: postgres://postgres:postgres@postgres:5432/notifications
+      USER_SERVICE_URL: http://user_service:8002/api/v1/
+      EMAIL_SENDER_TYPE: fake
+      DATA_SOURCE_TYPE: fake
+    depends_on:
+      - user_service
+      - postgres
 
   postgres:
     image: postgres:13-alpine
