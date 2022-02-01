@@ -10,7 +10,7 @@ WORKDIR $ROOT_APP
 
 RUN pip install -r requirements.txt
 
-COPY user_service $ROOT_APP/
+COPY user_service/src $ROOT_APP/
 
 CMD uvicorn main:app --port 8002 --host 0.0.0.0
 
