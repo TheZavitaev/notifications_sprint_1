@@ -12,5 +12,8 @@ class Config(BaseSettings):
     EMAIL_SENDER_TYPE: str = 'fake'
     DATA_SOURCE_TYPE: str = 'fake'
 
+    SENDGRID_API_KEY: str = 'secret_key'
+    SENDGRID_FROM_EMAIL: str = 'practix.notifications@gmail.com'
+
 
 config = Config()
