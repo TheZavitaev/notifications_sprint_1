@@ -9,7 +9,8 @@ class Config(BaseSettings):
     SCHEDULER_SLEEP_TIME: int = 5
     POSTGRES_BACKOFF_MAX_TIME: int = 50
 
-    USER_SERVICE_URL: str = 'http://127.0.0.1:8001/api/v1/'
+    USER_SERVICE_URL: str = 'http://127.0.0.1:8002/api/v1/'
+    USER_SERVICE_BACKOFF_MAX_TIME: int = 50
 
 
 config = Config()

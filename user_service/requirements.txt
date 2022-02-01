@@ -1,0 +1,5 @@
+backoff
+fastapi
+pydantic
+uvicorn
+orjson

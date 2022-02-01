@@ -1,5 +1,6 @@
 from typing import Optional
 
+import backoff as backoff
 import requests as requests
 
 from config import config
@@ -7,6 +8,8 @@ from .client_abstract import UserServiceClientAbstract, UserInfo
 
 
 class UserServiceClient(UserServiceClientAbstract):
+    @backoff.on_exception(backoff.expo, requests.exceptions.ConnectionError,
+                          max_time=config.USER_SERVICE_BACKOFF_MAX_TIME)
     def get_user(self, user_id: str) -> Optional[UserInfo]:
         response = requests.get(config.USER_SERVICE_URL + 'user/' + user_id)
         if response.status_code == 404:
