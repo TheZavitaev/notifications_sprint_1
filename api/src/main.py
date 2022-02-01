@@ -4,9 +4,8 @@ from uuid import UUID
 
 import backoff
 import pika
-from fastapi import FastAPI, HTTPException
-
 from config import settings
+from fastapi import FastAPI, HTTPException
 from model import Mailing, WelcomeNotification
 
 app = FastAPI()
@@ -27,6 +26,8 @@ def init_queue():
     parameters = pika.ConnectionParameters(
         settings.rabbit_host,
         credentials=credentials,
+        heartbeat=600,
+        blocked_connection_timeout=300
     )
 
     @backoff.on_exception(backoff.expo, pika.exceptions.AMQPConnectionError)

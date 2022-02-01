@@ -1,11 +1,10 @@
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
 import backoff as backoff
 import psycopg2
+from config import config
 from psycopg2 import sql
 from psycopg2.extras import DictCursor
-
-from config import config
 
 
 class Postgres():

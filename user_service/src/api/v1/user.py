@@ -1,11 +1,10 @@
 from http import HTTPStatus
 from typing import List
 
+from core.exceptions import NotFoundError
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-
-from core.exceptions import NotFoundError
-from services.user import get_user_service, AbstractUserService
+from services.user import AbstractUserService, get_user_service
 
 user_router = APIRouter()
 category_router = APIRouter()

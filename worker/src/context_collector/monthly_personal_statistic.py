@@ -1,6 +1,7 @@
 from typing import Any, Dict
 
 from user_service_client.client_abstract import UserServiceClientAbstract
+
 from .abstract import ContextCollectorAbstract
 
 

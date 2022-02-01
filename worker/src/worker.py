@@ -1,15 +1,14 @@
 import logging
 from typing import Any, Dict, Optional
 
-from jinja2 import Environment
-from psycopg2 import sql
-
 from context_collector.factory import ContextCollectorFactory, NotFoundException
 from data_source.abstract import DataSourceAbstract
 from db.postgres import Postgres
 from email_sender.abstract import EmailSenderAbstract
-from models import Template, Event
-from user_service_client.client_abstract import UserServiceClientAbstract, UserInfo
+from jinja2 import Environment
+from models import Event, Template
+from psycopg2 import sql
+from user_service_client.client_abstract import UserInfo, UserServiceClientAbstract
 
 
 class Worker:
@@ -21,8 +20,9 @@ class Worker:
         self.email_sender = email_sender
 
     def __get_template(self, template_id: int) -> Optional[Template]:
-        query = sql.SQL("""select title, code, template, subject from notification_templates 
-                           where id = %(id)s""")
+        query = sql.SQL("""
+        select title, code, template, subject from notification_templates where id = %(id)s
+                           """)
 
         items = self.postgres.exec(query, {'id': template_id})
         if len(items) != 1:

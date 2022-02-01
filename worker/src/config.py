@@ -12,4 +12,5 @@ class Config(BaseSettings):
     EMAIL_SENDER_TYPE: str = 'fake'
     DATA_SOURCE_TYPE: str = 'fake'
 
+
 config = Config()

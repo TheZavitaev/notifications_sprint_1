@@ -3,11 +3,10 @@ import logging
 import time
 from typing import List
 
-from psycopg2 import sql
-
 from config import config
 from db.postgres import Postgres
 from models import Event
+from psycopg2 import sql
 from publisher.publisher_abstract import PublisherAbstract
 from publisher.publisher_fake import PublisherFake
 from user_service_client.client import UserServiceClient

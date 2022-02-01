@@ -31,6 +31,16 @@ services:
     ports:
       - 8002:8002
 
+  fake_user_registration_service:
+    container_name: fake_user_registration_service
+    build:
+      context: .
+      dockerfile: dockerfiles/user_service/Dockerfile
+    environment:
+      NOTIFICATION_API_URL: http://api:8000/api/v1/user_registration
+    command:
+      python auth_faker.py
+
   scheduler:
     container_name: fake_netflix_scheduler
     build:
