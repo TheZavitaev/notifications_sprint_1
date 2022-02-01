@@ -4,10 +4,11 @@ from typing import Any, Dict, Optional
 from jinja2 import Environment
 from psycopg2 import sql
 
-from data_source.data_source import DataSourceAbstract
+from context_collector.factory import ContextCollectorFactory, NotFoundException
+from data_source.abstract import DataSourceAbstract
 from db.postgres import Postgres
+from email_sender.abstract import EmailSenderAbstract
 from models import Template, Event
-from sender.email_sender_abstract import EmailSenderAbstract
 from user_service_client.client_abstract import UserServiceClientAbstract, UserInfo
 
 
@@ -31,8 +32,13 @@ class Worker:
         return Template(**items[0])
 
     def __gather_context(self, user_id: str, template_code: str) -> Dict[Any, Any]:
-        # todo add context gatherer
-        return {}
+        context_collector_factory = ContextCollectorFactory(self.user_service_client)
+        try:
+            context_collector = context_collector_factory.create(template_code)
+        except NotFoundException:
+            # no context collector for this template type. Skip
+            return {}
+        return context_collector.collect(user_id)
 
     def __build_from_template(self, template: Template, user_info: UserInfo, context: Dict[Any, Any]) -> str:
         user_context = user_info.dict(include={'first_name', 'last_name'})
@@ -40,7 +46,7 @@ class Worker:
 
         env = Environment()
         template_obj = env.from_string(template.template)
-        return template_obj.render(data=context)
+        return template_obj.render(**context)
 
     def do(self):
         logging.info('Do work')
@@ -71,5 +77,3 @@ class Worker:
                 item_to_send = self.__build_from_template(template, user_info, context)
                 # отправить дальше
                 self.email_sender.send(user_info.email, template.subject, item_to_send)
-
-

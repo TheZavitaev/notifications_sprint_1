@@ -18,6 +18,8 @@ class UserInfo(BaseModel):
     email: str
     promo_agree: bool
     category: str
+    films_month_count: int
+    favourite_genre: str
 
 
 class UsersInfo(BaseModel):

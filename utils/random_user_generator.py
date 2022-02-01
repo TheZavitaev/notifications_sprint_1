@@ -15,11 +15,15 @@ class UserInfo(BaseModel):
     email: str
     promo_agree: bool
     category: str
+    films_month_count: int
+    favourite_genre: str
 
 
 def generate_user() -> UserInfo:
     response = requests.get('https://randomuser.me/api/?nat=us')
     data = response.json()
+
+    genres = ['аниме', 'биографический', 'боевик', 'вестерн', 'военный', 'детектив', 'детский', 'документальный']
 
     return UserInfo(
         id=str(uuid.uuid4()),
@@ -27,28 +31,17 @@ def generate_user() -> UserInfo:
         last_name=data['results'][0]['name']['last'],
         email=data['results'][0]['email'],
         promo_agree=bool(random.getrandbits(1)),
-        category='active' if random.randrange(10) < 9 else 'inactive'
+        category='active' if random.randrange(10) < 9 else 'inactive',
+        films_month_count=random.randrange(15),
+        favourite_genre=random.choice(genres)
     )
 
 
-active = []
-inactive = []
 users = []
-for i in range(0, 20):
+for i in range(0, 100):
     user = generate_user()
     users.append(user.dict())
     print(user)
-    if user.category == 'active':
-        active.append(user.id)
-    else:
-        inactive.append(user.id)
 
 with open('users.json', 'w') as file:
     json.dump({'users': users}, file)
-
-categories = {
-    "active": active,
-    "inactive": inactive
-}
-with open('user_categories.json', 'w') as file:
-    json.dump(categories, file)

@@ -67,7 +67,7 @@ class Scheduler:
     def get_ready_events(self) -> List[Event]:
         """Получить все записи, готовые к обработке"""
         query = sql.SQL("""select id, is_promo, priority, context, scheduled_datetime, template_id from mailing_tasks
-                           where scheduled_datetime < current_date
+                           where scheduled_datetime < current_timestamp
                            and status = 'pending'
                            order by scheduled_datetime
                            limit %(batch_size)s;""")
@@ -81,12 +81,12 @@ class Scheduler:
                 user_ids = context['user_ids']
                 del context['user_ids']
             except KeyError:
-                pass
+                user_ids = []
             try:
                 user_categories = context['user_categories']
                 del context['user_categories']
             except KeyError:
-                pass
+                user_categories = []
             item['context'] = context
             event = Event(
                 **item,
@@ -108,7 +108,7 @@ class Scheduler:
             user_ids = list(set(user_ids))
 
             if not event.user_ids:
-                logger.error(f'user_id list is empty. Skip')
+                logger.error('user_id list is empty. Skip')
                 self.mark_event_as_cancel(event.id)
                 continue
             event_chunks = self.__chunker(event)

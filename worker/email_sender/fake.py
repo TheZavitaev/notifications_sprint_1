@@ -1,6 +1,6 @@
 import time
 
-from sender.email_sender_abstract import EmailSenderAbstract
+from .abstract import EmailSenderAbstract
 
 
 class EmailSenderFake(EmailSenderAbstract):

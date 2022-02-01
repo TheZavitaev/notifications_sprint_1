@@ -1,12 +1,7 @@
 import json
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
+from typing import Optional, Dict, Any
 
-
-class DataSourceAbstract(ABC):
-    @abstractmethod
-    def get_data(self) -> Optional[Dict[Any, Any]]:
-        pass
+from .abstract import DataSourceAbstract
 
 
 class DataSourceFake(DataSourceAbstract):
