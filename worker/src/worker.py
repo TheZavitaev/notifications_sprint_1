@@ -49,7 +49,7 @@ class Worker:
         return template_obj.render(**context)
 
     def do(self):
-        logging.info('Do work')
+        logging.debug('Do work')
 
         data = self.data_source.get_data()
         if data:

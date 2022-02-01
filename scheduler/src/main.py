@@ -125,7 +125,7 @@ def main():
     )
 
     while True:
-        logger.info('Do work')
+        logger.debug('Do work')
         scheduler.work()
         time.sleep(config.SCHEDULER_SLEEP_TIME)
 

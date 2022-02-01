@@ -7,3 +7,4 @@ pydantic
 backoff
 Jinja2
 requests
+sendgrid
