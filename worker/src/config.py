@@ -15,5 +15,18 @@ class Config(BaseSettings):
     SENDGRID_API_KEY: str = 'secret_key'
     SENDGRID_FROM_EMAIL: str = 'practix.notifications@gmail.com'
 
+    rabbit_events_queue_name: str = 'email'
+    rabbit_events_exchange_name: str = 'email'
+
+    rabbit_username: str = 'rabbit'
+    rabbit_password: str = 'rabbit'
+    rabbit_host: str = 'fake_netflix_notification_rabbitmq'
+
+    rabbit_exchange: str = 'email'
+    rabbit_exchange_type: str = 'direct'
+
+    rabbit_email_routing_key: str = 'email'
+    rabbit_events_queues: str = '["email"]'
+
 
 config = Config()
