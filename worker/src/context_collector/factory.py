@@ -1,4 +1,5 @@
 from user_service_client.client_abstract import UserServiceClientAbstract
+
 from .abstract import ContextCollectorAbstract
 from .monthly_personal_statistic import ContextCollectorMonthlyPersonalStatistic
 

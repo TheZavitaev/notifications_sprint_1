@@ -1,11 +1,10 @@
 import json
-from abc import abstractmethod, ABC
+from abc import ABC, abstractmethod
 from functools import lru_cache
 from typing import List
 
-from models.user import UserInfo
-
 from core.exceptions import NotFoundError
+from models.user import UserInfo
 
 
 class AbstractUserService(ABC):

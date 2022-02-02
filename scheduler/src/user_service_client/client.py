@@ -2,8 +2,8 @@ from typing import List
 
 import backoff as backoff
 import requests as requests
-
 from config import config
+
 from .client_abstract import UserServiceClientAbstract
 
 

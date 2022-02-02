@@ -11,17 +11,17 @@ class Transport(str, Enum):
 
 
 class EventType(str, Enum):
-    welcome_letter = 'welcome_letter'
-    selection_movies = 'selection_movies'
-    personal_newsletter = 'personal_newsletter'
-
-    mailing_weekly = 'mailing_weekly'
-    mailing_monthly = 'mailing_monthly'
-
-    security_notification = 'security_notification'
+    common = 'common'
+    monthly_personal_statistic = 'monthly_personal_statistic'
 
 
-class Event(BaseModel):
+class Mailing(BaseModel):
     transport: Transport
     event_type: EventType
+    payload: Dict
+
+
+class WelcomeNotification(Mailing):
+    transport = Transport.email
+    event_type = EventType.common
     payload: Dict

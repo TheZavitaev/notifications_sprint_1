@@ -2,9 +2,9 @@ from typing import Optional
 
 import backoff as backoff
 import requests as requests
-
 from config import config
-from .client_abstract import UserServiceClientAbstract, UserInfo
+
+from .client_abstract import UserInfo, UserServiceClientAbstract
 
 
 class UserServiceClient(UserServiceClientAbstract):
