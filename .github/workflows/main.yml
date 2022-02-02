@@ -31,11 +31,7 @@ jobs:
       - name: Lint with wemake-python-styleguide
         run: |
           flake8 . --format=html --htmldir=report_flake_${{ matrix.python-version }}/
-          
-      - name: Lint with mypy
-        run: |
-          mypy --html-report report_mypy_api_${{ matrix.python-version }}/ api/src/*
-          mypy --html-report report_mypy_etl_${{ matrix.python-version }}/ etl/src/*
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v2
