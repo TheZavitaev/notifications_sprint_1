@@ -10,7 +10,7 @@ class Config(BaseSettings):
     WORKER_SLEEP_TIME: int = 1
 
     EMAIL_SENDER_TYPE: str = 'fake'
-    DATA_SOURCE_TYPE: str = 'fake'
+    DATA_SOURCE_TYPE: str = 'rabbitmq'
 
     SENDGRID_API_KEY: str = 'secret_key'
     SENDGRID_FROM_EMAIL: str = 'practix.notifications@gmail.com'
