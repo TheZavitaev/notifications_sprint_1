@@ -4,7 +4,7 @@ from .rabbitmq import DataSourceRabbitMQ
 
 
 class InvalidEmailSenderType(Exception):
-    """Invalid email sender type in factory"""
+    """Invalid email sender type in factory."""
 
 
 class DataSourceFactory:

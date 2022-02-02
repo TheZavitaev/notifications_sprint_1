@@ -24,7 +24,7 @@ class Scheduler:
 
     @staticmethod
     def __chunker(event: Event) -> List[Event]:
-        """Разбивает событие на несколько чанков с ограниченным количеством user_ids в каждом чанке"""
+        """Разбивает событие на несколько чанков с ограниченным количеством user_ids в каждом чанке."""
 
         def create_chunks(list_name, step):
             for i in range(0, len(list_name), step):
@@ -39,14 +39,14 @@ class Scheduler:
         return result
 
     def get_user_ids(self, user_categories: List[str]) -> List[str]:
-        """Получить список пользователей, относящихся к переданому списку категорий"""
+        """Получить список пользователей, относящихся к переданому списку категорий."""
         ids = []
         for category in user_categories:
             ids.extend(self.user_service.get_users_for_category(category))
         return ids
 
     def mark_event_as_done(self, item_id: int):
-        """Пометить запись как завершенную"""
+        """Пометить запись как завершенную."""
         query = sql.SQL("""update mailing_tasks
                            set status = 'done',
                            execution_datetime = current_timestamp
@@ -55,7 +55,7 @@ class Scheduler:
         self.postgres.exec(query, {'item_id': item_id})
 
     def mark_event_as_cancel(self, item_id: int):
-        """Пометить запись как завершенную"""
+        """Пометить запись как завершенную."""
         query = sql.SQL("""update mailing_tasks
                            set status = 'cancel',
                            execution_datetime = current_timestamp
@@ -64,7 +64,7 @@ class Scheduler:
         self.postgres.exec(query, {'item_id': item_id})
 
     def get_ready_events(self) -> List[Event]:
-        """Получить все записи, готовые к обработке"""
+        """Получить все записи, готовые к обработке."""
         query = sql.SQL("""select id, is_promo, priority, context, scheduled_datetime, template_id from mailing_tasks
                            where scheduled_datetime < current_timestamp
                            and status = 'pending'
@@ -90,13 +90,13 @@ class Scheduler:
             event = Event(
                 **item,
                 user_ids=user_ids,
-                user_categories=user_categories
+                user_categories=user_categories,
             )
             events.append(event)
         return events
 
     def work(self):
-        """Выбрать готовые записи и обработать их"""
+        """Выбрать готовые записи и обработать их."""
         events = self.get_ready_events()
         logger.info(f'Handle {len(events)} events')
         for event in events:

@@ -4,7 +4,7 @@ from .sendgrid import EmailSenderSendgrid
 
 
 class InvalidEmailSenderType(Exception):
-    """Invalid email sender type in factory"""
+    """Invalid email sender type in factory."""
 
 
 class EmailSenderFactory:

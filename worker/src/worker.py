@@ -1,13 +1,14 @@
 import logging
 from typing import Any, Dict, Optional
 
+from jinja2 import Environment
+from psycopg2 import sql
+
 from context_collector.factory import ContextCollectorFactory, NotFoundException
 from data_source.abstract import DataSourceAbstract
 from db.postgres import Postgres
 from email_sender.abstract import EmailSenderAbstract
-from jinja2 import Environment
 from models import Event, Template
-from psycopg2 import sql
 from user_service_client.client_abstract import UserInfo, UserServiceClientAbstract
 
 
@@ -44,7 +45,7 @@ class Worker:
         user_context = user_info.dict(include={'first_name', 'last_name'})
         context.update(user_context)
 
-        env = Environment()
+        env = Environment(autoescape=True)
         template_obj = env.from_string(template.template)
         return template_obj.render(**context)
 

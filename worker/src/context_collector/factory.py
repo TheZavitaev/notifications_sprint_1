@@ -5,7 +5,7 @@ from .monthly_personal_statistic import ContextCollectorMonthlyPersonalStatistic
 
 
 class NotFoundException(Exception):
-    """Context collectory not found"""
+    """Context collector not found."""
 
 
 class ContextCollectorFactory():
