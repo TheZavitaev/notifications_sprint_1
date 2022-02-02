@@ -51,7 +51,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           format: html
           message: |
-            <b>${{ github.workflow }}</b> UCG Deploy report
+            <b>${{ github.workflow }}</b> Notification deploy report
             <b>repo</b>: <a href="https://github.com/${{github.repository}}">${{github.repository}}</a>
             <b>event</b>: ${{ github.event_name }}
             <b>status</b>: ${{ needs.build.result }}
