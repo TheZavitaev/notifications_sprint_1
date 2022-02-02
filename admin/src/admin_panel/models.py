@@ -5,6 +5,7 @@ from django.utils import timezone
 
 class TemplateCodes(models.TextChoices):
     """Template codes."""
+
     common = 'common', 'Обычное письмо'
     monthly_personal_statistic = 'monthly_personal_statistic', 'Ежемесячная персональная статистика'
 
@@ -28,7 +29,6 @@ class Template(models.Model):
 
     def save(self, *args, **kwargs):
         """Save template."""
-
         if not self.id:
             self.created_at = timezone.now()
 
@@ -81,7 +81,6 @@ class MailingTask(models.Model):
 
     def save(self, *args, **kwargs):
         """Save task."""
-
         if not self.id:
             self.created_at = timezone.now()
 

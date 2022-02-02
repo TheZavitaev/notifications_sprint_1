@@ -10,7 +10,7 @@ class ContextCollectorMonthlyPersonalStatistic(ContextCollectorAbstract):
         self.user_service_client = user_service_client
 
     def collect(self, user_id: str) -> Dict[Any, Any]:
-        """Returns `films_month_count` and `favourite_genre` for user"""
+        """Return `films_month_count` and `favourite_genre` for user."""
         user = self.user_service_client.get_user(user_id)
 
         return user.dict(include={'films_month_count', 'favourite_genre'})

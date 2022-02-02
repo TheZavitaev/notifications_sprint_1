@@ -24,4 +24,3 @@ class EmailSenderSendgrid(EmailSenderAbstract):
         else:
             if response.status_code != 202:
                 logging.error(f'Error send email, {response}')
-

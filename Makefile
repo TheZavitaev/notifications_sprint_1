@@ -7,7 +7,7 @@ linters:
 	echo "Запускаю isort"
 	isort .
 	echo "Запускаю flake8"
-	flake8
+	flake8 flake8 admin api scheduler user_service worker utils
 	echo "Запускаю mypy"
 	mapy .
 # 	mypy api/src/*
