@@ -65,3 +65,34 @@ docker-compose exec admin_panel python manage.py loaddata fixtures/admin_panel_d
 
 Переключить [задачу](http://127.0.0.1:8000/admin/admin_panel/mailingtask/2/change/) в состояние `В очередь на отправку`
 Смотреть логи контейнера worker
+
+## Подергать через Notification API
+Заходим в swagger - http://127.0.0.1:8001/docs#
+
+Посылаем ивенты
+
+Имитация работы воркера:
+```
+{
+   "event_type":"monthly_personal_statistic",
+   "transport":"email",
+   "payload":{
+      "users_id":"39275483-d542-400a-bb7c-6aefa15fbee6",
+      "films":[
+         "380164b8-7503-4c15-b83d-88de95743880",
+         "380164b8-7503-4c15-b83d-88de95743880",
+         "380164b8-7503-4c15-b83d-88de95743880"
+      ]
+   }
+}
+```
+Имитация событий от AUTH
+```
+{
+    "user_id": "39275483-d542-400a-bb7c-6aefa15fbee6",
+}
+```
+
+# Над проектом работали:
+[Елисей Равнюшкин](https://github.com/elisey)
+[Олег Завитаев](https://github.com/TheZavitaev)

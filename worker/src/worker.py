@@ -1,22 +1,21 @@
 import logging
 from typing import Any, Dict, Optional
 
-from jinja2 import Environment
-from psycopg2 import sql
-
 from context_collector.factory import ContextCollectorFactory, NotFoundException
 from data_source.abstract import DataSourceAbstract
 from db.postgres import Postgres
 from email_sender.abstract import EmailSenderAbstract
+from jinja2 import Environment
 from models import Event, Template
+from psycopg2 import sql
 from user_service_client.client_abstract import UserInfo, UserServiceClientAbstract
 
 
 class Worker:
-    def __init__(self, postgres: Postgres, data_source: DataSourceAbstract,
-                 user_service_client: UserServiceClientAbstract, email_sender: EmailSenderAbstract):
+    def __init__(self, postgres: Postgres,
+                 user_service_client: UserServiceClientAbstract,
+                 email_sender: EmailSenderAbstract):
         self.postgres = postgres
-        self.data_source = data_source
         self.user_service_client = user_service_client
         self.email_sender = email_sender
 
@@ -49,33 +48,29 @@ class Worker:
         template_obj = env.from_string(template.template)
         return template_obj.render(**context)
 
-    def do(self):
+    def do(self, event):
         logging.debug('Do work')
 
-        data = self.data_source.get_data()
-        if data:
-            event = Event(**data)
+        # Получить шаблон
+        template = self.__get_template(event.template_id)
+        if not template:
+            return
+        for user_id in event.user_ids:
+            # Получить информацию о пользователе
+            user_info = self.user_service_client.get_user(user_id)
+            if not user_info:
+                logging.error(f'User {user_id} not found')
+                continue
+            # Проверить разрешил ли пользователь получать промо
+            if event.is_promo and not user_info.promo_agree:
+                logging.info('User is not agreed to receive promo messages. Skip')
+                continue
 
-            # Получить шаблон
-            template = self.__get_template(event.template_id)
-            if not template:
-                return
-            for user_id in event.user_ids:
-                # Получить информацию о пользователе
-                user_info = self.user_service_client.get_user(user_id)
-                if not user_info:
-                    logging.error(f'User {user_id} not found')
-                    continue
-                # Проверить разрешил ли пользователь получать промо
-                if event.is_promo and not user_info.promo_agree:
-                    logging.info('User is not agreed to receive promo messages. Skip')
-                    continue
-
-                # в зависимости от tempate_type собираем контекст
-                context = self.__gather_context(user_id, template.code)
-                context.update(event.context)
-                # Шаблонизировать
-                item_to_send = self.__build_from_template(template, user_info, context)
-                # отправить дальше
-                self.email_sender.send(user_info.email, template.subject, item_to_send)
-            logging.info(f'Handled {len(event.user_ids)} notifications')
+            # в зависимости от tempate_type собираем контекст
+            context = self.__gather_context(user_id, template.code)
+            context.update(event.context)
+            # Шаблонизировать
+            item_to_send = self.__build_from_template(template, user_info, context)
+            # отправить дальше
+            self.email_sender.send(user_info.email, template.subject, item_to_send)
+        logging.info(f'Handled {len(event.user_ids)} notifications')

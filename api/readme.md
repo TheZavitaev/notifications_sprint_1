@@ -7,41 +7,42 @@ API представляет из себя две ручки, на котору�
 Приветственное письмо на `/api/v1/user_registration`:
 ```
 {
-    "user_id": "ad0ec496-8c65-42c5-8fa7-3cf17bdaca7f",
+    "user_id": "39275483-d542-400a-bb7c-6aefa15fbee6",
 }
 ```
 
 Все остальное на `/api/v1/send_notification`. Например, рекомендации от команды на рождество:
 ```
 {
-    "event_type": "common",
-    "transport": "email",
-    "payload": {
-            "user_categories": [
-                    "new_users",
-                ],
-            "films": [
-                    "380164b8-7503-4c15-b83d-88de95743880",
-                    "380164b8-7503-4c15-b83d-88de95743880",
-                    "380164b8-7503-4c15-b83d-88de95743880",
-                ]
-        }
+   "event_type":"common",
+   "transport":"email",
+   "payload":{
+      "users_id":[
+         "39275483-d542-400a-bb7c-6aefa15fbee6",
+         "39275483-d542-400a-bb7c-6aefa15fbee6"
+      ],
+      "films":[
+         "380164b8-7503-4c15-b83d-88de95743880",
+         "380164b8-7503-4c15-b83d-88de95743880",
+         "380164b8-7503-4c15-b83d-88de95743880"
+      ]
+   }
 }
 ```
 
 Или персональная рассылка:
 ```
 {
-    "event_type": "monthly_personal_statistic",
-    "transport": "email",
-    "payload": {
-            "user_id": "ad0ec496-8c65-42c5-8fa7-3cf17bdaca7f",
-            "films": [
-                    "380164b8-7503-4c15-b83d-88de95743880",
-                    "380164b8-7503-4c15-b83d-88de95743880",
-                    "380164b8-7503-4c15-b83d-88de95743880",
-                ]
-        }
+   "event_type":"monthly_personal_statistic",
+   "transport":"email",
+   "payload":{
+      "users_id":"39275483-d542-400a-bb7c-6aefa15fbee6",
+      "films":[
+         "380164b8-7503-4c15-b83d-88de95743880",
+         "380164b8-7503-4c15-b83d-88de95743880",
+         "380164b8-7503-4c15-b83d-88de95743880"
+      ]
+   }
 }
 ```
 

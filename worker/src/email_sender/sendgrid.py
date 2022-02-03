@@ -1,10 +1,10 @@
 import logging
 
+from config import config
 from python_http_client.exceptions import HTTPError
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
-from config import config
 from .abstract import EmailSenderAbstract
 
 
