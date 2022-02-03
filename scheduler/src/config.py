@@ -15,4 +15,5 @@ class Config(BaseSettings):
     NOTIFICATION_API_URL: str = 'http://127.0.0.1:8000/api/v1/send_notification'
     NOTIFICATION_API_BACKOFF_MAX_TIME: int = 50
 
+
 config = Config()

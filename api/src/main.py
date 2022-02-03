@@ -4,10 +4,10 @@ from uuid import UUID
 
 import backoff
 import pika
+from fastapi import FastAPI, HTTPException
 from pydantic.main import BaseModel
 
 from config import settings
-from fastapi import FastAPI, HTTPException
 from model import Event
 
 app = FastAPI()
@@ -53,6 +53,7 @@ def init_queue():
 def shutdown_event():
     logger.info('Closing queue connection.')
     connection.close()
+
 
 class NotificationData(BaseModel):
     event: Event

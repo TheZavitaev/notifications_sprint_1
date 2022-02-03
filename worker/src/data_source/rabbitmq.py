@@ -1,24 +1,17 @@
 import json
 import logging
-import uuid
 from typing import Callable, Optional
 
 import backoff
 import pika
-from config import config
-from models import Event
 from pika import channel as pika_channel  # noqa: F401
 from pika.adapters.blocking_connection import BlockingChannel
 
+from config import config
+from models import Event
 from .abstract import DataSourceAbstract
 
 logger = logging.getLogger(__name__)
-
-
-TEMPLATE_ID = {
-    'common': 2,
-    'monthly_personal_statistic': 3
-}
 
 
 class DataSourceRabbitMQ(DataSourceAbstract):
