@@ -1,14 +1,13 @@
 import logging
 from typing import Any, Dict, Optional
 
-from jinja2 import Environment
-from psycopg2 import sql
-
 from context_collector.factory import ContextCollectorFactory, NotFoundException
 from data_source.abstract import DataSourceAbstract
 from db.postgres import Postgres
 from email_sender.abstract import EmailSenderAbstract
+from jinja2 import Environment
 from models import Event, Template
+from psycopg2 import sql
 from user_service_client.client_abstract import UserInfo, UserServiceClientAbstract
 
 

@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-from typing import Optional, Callable
+from typing import Callable, Optional
 
 import backoff
 import pika
