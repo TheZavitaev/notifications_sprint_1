@@ -27,6 +27,7 @@ class Config(BaseSettings):
 
     rabbit_email_routing_key: str = 'email'
     rabbit_events_queues: str = '["email"]'
+    rabbit_routing_key: str = 'email'
 
 
 config = Config()

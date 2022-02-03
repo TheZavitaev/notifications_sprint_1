@@ -1,18 +1,24 @@
 import json
 import logging
-from typing import Any, Dict, Optional
+import uuid
+from typing import Optional, Callable
 
 import backoff
 import pika
+from config import config
+from models import Event
 from pika import channel as pika_channel  # noqa: F401
+from pika.adapters.blocking_connection import BlockingChannel
 
-# from .abstract import DataSourceAbstract
-# from config import config
-from abstract import DataSourceAbstract
-from worker.src.config import config
-from worker.src.models import Event
+from .abstract import DataSourceAbstract
 
 logger = logging.getLogger(__name__)
+
+
+TEMPLATE_ID = {
+    'common': 2,
+    'monthly_personal_statistic': 3
+}
 
 
 class DataSourceRabbitMQ(DataSourceAbstract):
@@ -25,7 +31,8 @@ class DataSourceRabbitMQ(DataSourceAbstract):
         credentials=credentials,
     )
 
-    def __init__(self):
+    def __init__(self, worker):
+        self.queue = config.rabbit_events_queue_name
         self.connection = self._connect()
         self.channel = self.connection.channel()
 
@@ -38,6 +45,7 @@ class DataSourceRabbitMQ(DataSourceAbstract):
             queue=config.rabbit_events_queue_name,
             durable=True
         )
+        self.worker = worker
 
         logger.info('Connected to queue.')
 
@@ -52,63 +60,58 @@ class DataSourceRabbitMQ(DataSourceAbstract):
             logger.exception(exc)
             return None
 
-    def on_message(
-            self,
-            _unused_channel: pika_channel.Channel,
-            basic_deliver: pika.spec.Basic.Deliver,
-            _properties: pika.spec.BasicProperties,
-            body: bytes,
-    ):
-        event_data = self.decode_data(body, basic_deliver.delivery_tag)
-        if event_data is None:
-            self.channel.basic_ack(basic_deliver.delivery_tag)
+    def listen_events(self):
+        if self.channel:
+            self.channel.exchange_declare(
+                exchange=config.rabbit_exchange,
+                exchange_type=config.rabbit_exchange_type,
+                durable=True
+            )
 
-        is_promo = None
-        template_id = None
-        users = None
-        context = None
+            self.channel.queue_declare(queue=self.queue, durable=True)
+            self.channel.queue_bind(
+                exchange=config.rabbit_exchange,
+                queue=self.queue,
+                routing_key=config.rabbit_routing_key
+            )
 
-        try:
-            if event_data.get('payload'):
-                template_id = event_data.get('event_type')
-                transport = event_data["transport"]
-                users = event_data['payload']['users_id']
-                films = event_data['payload']['films']
-                user_categories = event_data['payload']['user_categories']
-                is_promo = True
-                context = [films, user_categories]
+            self.channel.basic_consume(
+                queue=self.queue,
+                on_message_callback=self.callback_factory(channel=self.channel),
+                auto_ack=True,
+            )
 
+            logger.debug('[*] waiting for %s messages' % self.queue)
+
+            self.channel.start_consuming()
+
+    def callback_factory(self, channel: BlockingChannel) -> Callable:
+        def callback(ch: BlockingChannel, method, properties, body: bytes) -> None:
+            event_data = json.loads(body)
+            logger.debug(f'Get data - {event_data}')
+
+            event_type = event_data.get('event_type')
+            template_id = TEMPLATE_ID.get(event_type)
+            is_promo = False if template_id == 1 else True
+
+            users = [event_data['payload']['users_id'], ]
+
+            films = event_data['payload'].get('films')
+            if films:
+                context = {'films': films}
             else:
-                event_type = 'common'
-                transport = 'email'
-                users = event_data.get('user_id')
-                is_promo = False
-                context = []
+                template_id = 1
+                context = {}
 
-        except KeyError as ex:
-            logger.error(ex)
+            notification = Event(
+                id=uuid.uuid4(),
+                is_promo=is_promo,
+                template_id=template_id,
+                user_ids=users,
+                context=context
+            )
 
-        notification = Event(is_promo=is_promo, template_id=template_id, user_ids=users, context=context)
+            logger.debug(f'Prepared notification for send - {notification}')
+            self.worker.do(notification)
 
-
-        self.channel.basic_ack(basic_deliver.delivery_tag)
-
-
-
-    def get_data(self) -> Optional[Dict[Any, Any]]:
-        # get data from rabbit and return json
-        #     {
-        #       "id": 2,
-        #       "is_promo": true,
-        #       "template_id": 3,
-        #       "user_ids": [
-        #         "894cd492-a3bc-424c-895f-1f2772074304",
-        #         "6c88ad4d-a9f7-440f-ba22-45d00c41a072",
-        #         "8509b63e-aceb-431f-9008-665ffff772d0",
-        #         "581defac-e938-44f5-971a-00db5c4031df",
-        #         "80fd41eb-9a85-4995-a127-9c12c7a2493f"
-        #       ],
-        #       "context": {}
-        #     },
-        pass
-
+        return callback

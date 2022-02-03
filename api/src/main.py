@@ -73,7 +73,7 @@ def put_notification_to_queue(mailing: Mailing):
 
 @app.post('/api/v1/user_registration', status_code=http.HTTPStatus.CREATED)
 def put_event_to_queue(user_id: UUID):
-    event = WelcomeNotification(payload={'user_id': user_id})
+    event = WelcomeNotification(payload={'users_id': user_id})
 
     try:
         channel.basic_publish(
