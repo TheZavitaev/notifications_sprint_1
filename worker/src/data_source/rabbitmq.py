@@ -90,26 +90,7 @@ class DataSourceRabbitMQ(DataSourceAbstract):
             event_data = json.loads(body)
             logger.debug(f'Get data - {event_data}')
 
-            event_type = event_data.get('event_type')
-            template_id = TEMPLATE_ID.get(event_type)
-            is_promo = False if template_id == 1 else True
-
-            users = [event_data['payload']['users_id'], ]
-
-            films = event_data['payload'].get('films')
-            if films:
-                context = {'films': films}
-            else:
-                template_id = 1
-                context = {}
-
-            notification = Event(
-                id=uuid.uuid4(),
-                is_promo=is_promo,
-                template_id=template_id,
-                user_ids=users,
-                context=context
-            )
+            notification = Event(**event_data)
 
             logger.debug(f'Prepared notification for send - {notification}')
             self.worker.do(notification)

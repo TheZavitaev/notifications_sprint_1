@@ -4,9 +4,11 @@ from uuid import UUID
 
 import backoff
 import pika
+from pydantic.main import BaseModel
+
 from config import settings
 from fastapi import FastAPI, HTTPException
-from model import Mailing, WelcomeNotification
+from model import Event
 
 app = FastAPI()
 
@@ -52,14 +54,17 @@ def shutdown_event():
     logger.info('Closing queue connection.')
     connection.close()
 
+class NotificationData(BaseModel):
+    event: Event
+
 
 @app.post('/api/v1/send_notification', status_code=http.HTTPStatus.CREATED)
-def put_notification_to_queue(mailing: Mailing):
+def put_notification_to_queue(data: NotificationData):
     try:
         channel.basic_publish(
             exchange=settings.rabbit_exchange,
             routing_key=settings.rabbit_events_queue_name,
-            body=mailing.json(),
+            body=data.event.json(),
         )
     except Exception as err:
         logger.error(f'ERROR - queue publishing error: {str(err)}')
@@ -73,7 +78,12 @@ def put_notification_to_queue(mailing: Mailing):
 
 @app.post('/api/v1/user_registration', status_code=http.HTTPStatus.CREATED)
 def put_event_to_queue(user_id: UUID):
-    event = WelcomeNotification(payload={'users_id': user_id})
+    event = Event(
+        is_promo=False,
+        template_id=settings.user_registration_template,
+        user_ids=[str(user_id)],
+        context={}
+    )
 
     try:
         channel.basic_publish(

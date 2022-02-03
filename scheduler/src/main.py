@@ -8,7 +8,7 @@ from db.postgres import Postgres
 from models import Event
 from psycopg2 import sql
 from publisher.publisher_abstract import PublisherAbstract
-from publisher.publisher_fake import PublisherFake
+from publisher.publisher_api import PublisherApi
 from user_service_client.client import UserServiceClient
 from user_service_client.client_abstract import UserServiceClientAbstract
 
@@ -121,7 +121,7 @@ def main():
     scheduler = Scheduler(
         Postgres(),
         UserServiceClient(),
-        PublisherFake()
+        PublisherApi()
     )
 
     while True:
