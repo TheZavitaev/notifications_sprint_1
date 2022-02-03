@@ -48,6 +48,8 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/scheduler/Dockerfile
+    restart:
+      always
     environment:
       POSTGRES_DSN: postgres://postgres:postgres@postgres:5432/notifications
       USER_SERVICE_URL: http://user_service:8002/api/v1/
