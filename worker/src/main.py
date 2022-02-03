@@ -1,13 +1,10 @@
 import logging
-import time
 
 from config import config
-from data_source.factory import DataSourceFactory
 from data_source.rabbitmq import DataSourceRabbitMQ
 from db.postgres import Postgres
 from email_sender.factory import EmailSenderFactory
 from user_service_client.client import UserServiceClient
-
 from worker import Worker
 
 logging.basicConfig(level=logging.INFO)

@@ -72,24 +72,27 @@ docker-compose exec admin_panel python manage.py loaddata fixtures/admin_panel_d
 Посылаем ивенты
 
 Имитация работы воркера:
-```
+```json
 {
-   "event_type":"monthly_personal_statistic",
-   "transport":"email",
-   "payload":{
-      "users_id":"39275483-d542-400a-bb7c-6aefa15fbee6",
-      "films":[
-         "380164b8-7503-4c15-b83d-88de95743880",
-         "380164b8-7503-4c15-b83d-88de95743880",
-         "380164b8-7503-4c15-b83d-88de95743880"
-      ]
-   }
+  "event": {
+    "is_promo": true,
+    "priority": "low",
+    "template_id": 3,
+    "user_ids": [
+      "894cd492-a3bc-424c-895f-1f2772074304",
+      "6c88ad4d-a9f7-440f-ba22-45d00c41a072",
+      "8509b63e-aceb-431f-9008-665ffff772d0",
+      "581defac-e938-44f5-971a-00db5c4031df",
+      "80fd41eb-9a85-4995-a127-9c12c7a2493f"
+    ],
+    "context": {}
+  }
 }
 ```
 Имитация событий от AUTH
-```
+```json
 {
-    "user_id": "39275483-d542-400a-bb7c-6aefa15fbee6",
+    "user_id": "39275483-d542-400a-bb7c-6aefa15fbee6"
 }
 ```
 

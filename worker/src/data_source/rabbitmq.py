@@ -1,24 +1,17 @@
 import json
 import logging
-import uuid
 from typing import Callable, Optional
 
 import backoff
 import pika
-from config import config
-from models import Event
 from pika import channel as pika_channel  # noqa: F401
 from pika.adapters.blocking_connection import BlockingChannel
 
+from config import config
+from models import Event
 from .abstract import DataSourceAbstract
 
 logger = logging.getLogger(__name__)
-
-
-TEMPLATE_ID = {
-    'common': 2,
-    'monthly_personal_statistic': 3
-}
 
 
 class DataSourceRabbitMQ(DataSourceAbstract):
@@ -90,26 +83,7 @@ class DataSourceRabbitMQ(DataSourceAbstract):
             event_data = json.loads(body)
             logger.debug(f'Get data - {event_data}')
 
-            event_type = event_data.get('event_type')
-            template_id = TEMPLATE_ID.get(event_type)
-            is_promo = False if template_id == 1 else True
-
-            users = [event_data['payload']['users_id'], ]
-
-            films = event_data['payload'].get('films')
-            if films:
-                context = {'films': films}
-            else:
-                template_id = 1
-                context = {}
-
-            notification = Event(
-                id=uuid.uuid4(),
-                is_promo=is_promo,
-                template_id=template_id,
-                user_ids=users,
-                context=context
-            )
+            notification = Event(**event_data)
 
             logger.debug(f'Prepared notification for send - {notification}')
             self.worker.do(notification)

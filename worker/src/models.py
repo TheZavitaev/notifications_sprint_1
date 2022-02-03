@@ -4,7 +4,6 @@ from pydantic.main import BaseModel
 
 
 class Event(BaseModel):
-    id: int
     is_promo: bool
     template_id: int
     user_ids: Optional[List[str]]

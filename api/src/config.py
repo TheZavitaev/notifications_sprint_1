@@ -14,5 +14,7 @@ class Settings(BaseSettings):
 
     log_level: str = 'INFO'
 
+    user_registration_template: int = 1
+
 
 settings = Settings()
