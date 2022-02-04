@@ -101,5 +101,6 @@ docker-compose exec admin_panel python manage.py loaddata fixtures/admin_panel_d
 ```
 
 # Над проектом работали:
-[Елисей Равнюшкин](https://github.com/elisey)
-[Олег Завитаев](https://github.com/TheZavitaev)
+
+[Елисей Равнюшкин](https://github.com/elisey)  
+[Олег Завитаев](https://github.com/TheZavitaev)  

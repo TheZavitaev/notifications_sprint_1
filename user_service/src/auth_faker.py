@@ -5,7 +5,7 @@ from random import choice
 from time import sleep
 
 import requests
-from core.config import NOTIFICATION_API_URL
+from core.config import NOTIFICATION_API_REGISTRATION_EVENT_URL
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +15,7 @@ def send_new_user_id(user_id):
         'user_id': user_id,
     }
 
-    response = requests.post(NOTIFICATION_API_URL, params=params)
+    response = requests.post(NOTIFICATION_API_REGISTRATION_EVENT_URL, params=params)
 
     if response.status_code == http.HTTPStatus.CREATED:
         logger.info(f'User {user_id} registered in FakeNetflix')

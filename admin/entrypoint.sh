@@ -1,6 +1,6 @@
 #!/bin/bash
 
-until PGPASSWORD=$POSTGRES_PASSWORD psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c '\q'; do
+until PGPASSWORD=$PG_PASSWD psql -h "$PG_HOST" -U "$PG_USER" -d "$PG_DBNAME" -c '\q'; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done
