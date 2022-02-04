@@ -1,7 +1,7 @@
 import copy
 import logging
 import time
-from typing import List
+from typing import List, Generator
 
 from config import config
 from db.postgres import Postgres
@@ -9,7 +9,7 @@ from models import Event
 from psycopg2 import sql
 from publisher.publisher_abstract import PublisherAbstract
 from publisher.publisher_api import PublisherApi
-from scheduler.src.helpers import get_events, create_chunks
+from helpers import create_chunks
 from user_service_client.client import UserServiceClient
 from user_service_client.client_abstract import UserServiceClientAbstract
 
@@ -24,16 +24,12 @@ class Scheduler:
         self.publisher = publisher
 
     @staticmethod
-    def _chunker(event: Event) -> List[Event]:
+    def _chunker(event: Event) -> Generator[Event, None, None]:
         """Разбивает событие на несколько чанков с ограниченным количеством user_ids в каждом чанке."""
-
-        result = []
-
         for users_chunk in create_chunks(event.user_ids, config.PUBLISHER_CHUNK_SIZE):
             new_event = copy.deepcopy(event)
             new_event.user_ids = users_chunk
-            result.append(new_event)
-        return result
+            yield new_event
 
     def get_user_ids(self, user_categories: List[str]) -> List[str]:
         """Получить список пользователей, относящихся к переданому списку категорий."""
@@ -60,6 +56,31 @@ class Scheduler:
 
         self.postgres.exec(query, {'item_id': item_id})
 
+    def _build_events(self, items: list) -> list[Event]:
+        events = []
+
+        for item in items:
+            context = item['context']
+            try:
+                user_ids = context['user_ids']
+                del context['user_ids']
+            except KeyError:
+                user_ids = []
+            try:
+                user_categories = context['user_categories']
+                del context['user_categories']
+            except KeyError:
+                user_categories = []
+            item['context'] = context
+            event = Event(
+                **item,
+                user_ids=user_ids,
+                user_categories=user_categories,
+            )
+            events.append(event)
+
+        return events
+
     def get_ready_events(self) -> List[Event]:
         """Получить все записи, готовые к обработке."""
         query = sql.SQL("""select id, is_promo, priority, context, scheduled_datetime, template_id from mailing_tasks
@@ -69,10 +90,7 @@ class Scheduler:
                            limit %(batch_size)s;""")
 
         items = self.postgres.exec(query, {'batch_size': config.SELECT_BATCH_SIZE})
-
-        events = get_events(items)
-
-        return events
+        return self._build_events(items)
 
     def work(self):
         """Выбрать готовые записи и обработать их."""
@@ -89,8 +107,7 @@ class Scheduler:
                 logger.error('user_id list is empty. Skip')
                 self.mark_event_as_cancel(event.id)
                 continue
-            event_chunks = self._chunker(event)
-            for chunk in event_chunks:
+            for chunk in self._chunker(event):
                 self.publisher.publish(chunk.dict(exclude={'user_categories'}))
 
             self.mark_event_as_done(event.id)

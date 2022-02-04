@@ -16,4 +16,4 @@ API_VERSION = '1.0.0'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Адрес API, принимающего события для отправки уведомлений
-NOTIFICATION_API_URL = os.getenv('NOTIFICATION_API_URL')
+NOTIFICATION_API_REGISTRATION_EVENT_URL = os.getenv('NOTIFICATION_API_REGISTRATION_EVENT_URL')
