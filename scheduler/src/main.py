@@ -9,6 +9,7 @@ from models import Event
 from psycopg2 import sql
 from publisher.publisher_abstract import PublisherAbstract
 from publisher.publisher_api import PublisherApi
+from scheduler.src.helpers import get_events, create_chunks
 from user_service_client.client import UserServiceClient
 from user_service_client.client_abstract import UserServiceClientAbstract
 
@@ -23,12 +24,8 @@ class Scheduler:
         self.publisher = publisher
 
     @staticmethod
-    def __chunker(event: Event) -> List[Event]:
+    def _chunker(event: Event) -> List[Event]:
         """Разбивает событие на несколько чанков с ограниченным количеством user_ids в каждом чанке."""
-
-        def create_chunks(list_name, step):
-            for i in range(0, len(list_name), step):
-                yield list_name[i: i + step]
 
         result = []
 
@@ -73,26 +70,8 @@ class Scheduler:
 
         items = self.postgres.exec(query, {'batch_size': config.SELECT_BATCH_SIZE})
 
-        events = []
-        for item in items:
-            context = item['context']
-            try:
-                user_ids = context['user_ids']
-                del context['user_ids']
-            except KeyError:
-                user_ids = []
-            try:
-                user_categories = context['user_categories']
-                del context['user_categories']
-            except KeyError:
-                user_categories = []
-            item['context'] = context
-            event = Event(
-                **item,
-                user_ids=user_ids,
-                user_categories=user_categories,
-            )
-            events.append(event)
+        events = get_events(items)
+
         return events
 
     def work(self):
@@ -110,7 +89,7 @@ class Scheduler:
                 logger.error('user_id list is empty. Skip')
                 self.mark_event_as_cancel(event.id)
                 continue
-            event_chunks = self.__chunker(event)
+            event_chunks = self._chunker(event)
             for chunk in event_chunks:
                 self.publisher.publish(chunk.dict(exclude={'user_categories'}))
 

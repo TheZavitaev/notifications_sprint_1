@@ -6,11 +6,8 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/admin/Dockerfile
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: notifications
-      POSTGRES_HOST: postgres
+    env_file:
+      - .env
     volumes:
       - fake_netflix_notification_static:/app/static
       - fake_netflix_notification_media:/app/media
@@ -50,10 +47,8 @@ services:
       dockerfile: dockerfiles/scheduler/Dockerfile
     restart:
       always
-    environment:
-      POSTGRES_DSN: postgres://postgres:postgres@postgres:5432/notifications
-      USER_SERVICE_URL: http://user_service:8002/api/v1/
-      NOTIFICATION_API_URL: http://api:8000/api/v1/send_notification
+    env_file:
+      - .env
     depends_on:
       - user_service
       - postgres
@@ -66,22 +61,16 @@ services:
       dockerfile: dockerfiles/worker/Dockerfile
     restart:
       always
-    environment:
-      POSTGRES_DSN: postgres://postgres:postgres@postgres:5432/notifications
-      USER_SERVICE_URL: http://user_service:8002/api/v1/
-      EMAIL_SENDER_TYPE: fake
-      DATA_SOURCE_TYPE: fake
+    env_file:
+      - .env
     depends_on:
       - user_service
       - postgres
 
   postgres:
     image: postgres:13-alpine
-    environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: notifications
-      POSTGRES_HOST: localhost
+    env_file:
+      - .env
     volumes:
       - postgres_notification_data:/var/lib/postgresql/data
     ports:
@@ -90,9 +79,8 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: fake_netflix_notification_rabbitmq
-    environment:
-      RABBITMQ_DEFAULT_USER: rabbit
-      RABBITMQ_DEFAULT_PASS: rabbit
+    env_file:
+      - .env
     ports:
       - 5672:5672
       - 15672:15672
