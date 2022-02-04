@@ -53,6 +53,10 @@
 
 # Как запустить локально
 
+Создаем `.env` файл и наполняем его секретами аналогично `.env.template`. 
+
+После этого можно приступать к сборке:
+
 ```shell
 docker-compose up --build
 docker-compose exec admin_panel python manage.py createsuperuser
