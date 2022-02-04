@@ -7,7 +7,7 @@ from psycopg2 import sql
 from context_collector.factory import ContextCollectorFactory, NotFoundException
 from db.postgres import Postgres
 from email_sender.abstract import EmailSenderAbstract
-from models import Template
+from models import Template, Event
 from user_service_client.client_abstract import UserInfo, UserServiceClientAbstract
 
 
@@ -48,29 +48,37 @@ class Worker:
         template_obj = env.from_string(template.template)
         return template_obj.render(**context)
 
-    def do(self, event):
+    def is_can_send_promo(self, event: Event, user_info: UserInfo) -> bool:
+        """Проверяет, можем ли мы отсылать это сообщение пользователю."""
+        if event.is_promo and not user_info.promo_agree:
+            return False
+        return True
+
+    def handle_user(self, user_info: UserInfo, event: Event, template: Template):
+        """Готовит сообщение для пользователя и отправляет его."""
+        if not self.is_can_send_promo(event, user_info):
+            logging.info('User is not agreed to receive promo messages. Skip')
+            return
+
+        context = self.__gather_context(user_info.id, template.code)
+        context.update(event.context)
+
+        item_to_send = self.__build_from_template(template, user_info, context)
+        self.email_sender.send(user_info.email, template.subject, item_to_send)
+
+    def do(self, event: Event):
+        """Обрабатывает задание на отправку уведомлений пользователям."""
         logging.debug('Do work')
 
-        # Получить шаблон
         template = self.__get_template(event.template_id)
         if not template:
             return
         for user_id in event.user_ids:
-            # Получить информацию о пользователе
             user_info = self.user_service_client.get_user(user_id)
             if not user_info:
                 logging.error(f'User {user_id} not found')
                 continue
-            # Проверить разрешил ли пользователь получать промо
-            if event.is_promo and not user_info.promo_agree:
-                logging.info('User is not agreed to receive promo messages. Skip')
-                continue
 
-            # в зависимости от tempate_type собираем контекст
-            context = self.__gather_context(user_id, template.code)
-            context.update(event.context)
-            # Шаблонизировать
-            item_to_send = self.__build_from_template(template, user_info, context)
-            # отправить дальше
-            self.email_sender.send(user_info.email, template.subject, item_to_send)
+            self.handle_user(user_info, event, template)
+
         logging.info(f'Handled {len(event.user_ids)} notifications')
