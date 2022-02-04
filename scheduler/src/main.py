@@ -9,6 +9,7 @@ from models import Event
 from psycopg2 import sql
 from publisher.publisher_abstract import PublisherAbstract
 from publisher.publisher_api import PublisherApi
+from scheduler.src.helpers import get_events
 from user_service_client.client import UserServiceClient
 from user_service_client.client_abstract import UserServiceClientAbstract
 
@@ -73,26 +74,8 @@ class Scheduler:
 
         items = self.postgres.exec(query, {'batch_size': config.SELECT_BATCH_SIZE})
 
-        events = []
-        for item in items:
-            context = item['context']
-            try:
-                user_ids = context['user_ids']
-                del context['user_ids']
-            except KeyError:
-                user_ids = []
-            try:
-                user_categories = context['user_categories']
-                del context['user_categories']
-            except KeyError:
-                user_categories = []
-            item['context'] = context
-            event = Event(
-                **item,
-                user_ids=user_ids,
-                user_categories=user_categories,
-            )
-            events.append(event)
+        events = get_events(items)
+
         return events
 
     def work(self):
