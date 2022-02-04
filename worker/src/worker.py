@@ -54,7 +54,7 @@ class Worker:
             return False
         return True
 
-    def handle_user(self, user_info: UserInfo, event:Event, template: Template):
+    def handle_user(self, user_info: UserInfo, event: Event, template: Template):
         """Готовит сообщение для пользователя и отправляет его."""
         if not self.is_can_send_promo(event, user_info):
             logging.info('User is not agreed to receive promo messages. Skip')
