@@ -1,8 +1,9 @@
 from scheduler.src.models import Event
 
 
-def get_events(items):
+def get_events(items: list) -> list[Event]:
     events = []
+
     for item in items:
         context = item['context']
         try:
@@ -22,3 +23,10 @@ def get_events(items):
             user_categories=user_categories,
         )
         events.append(event)
+
+    return events
+
+
+def create_chunks(list_name, step):
+    for i in range(0, len(list_name), step):
+        yield list_name[i: i + step]
